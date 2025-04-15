@@ -1,0 +1,43 @@
+server:
+  port: 4004
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        ## http://localhost:4004/auth/login
+        ## API GATEWAY -> http://auth-service:4005/login
+        - id : auth-service-route
+          uri : http://host.docker.internal:4005
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+
+        ## REST CLIENT -> http://localhost:4004/api/patients
+        ## API GATEWAY -> http://patient-service:4000/patients
+        ## PATIENT SERVICE(SPRING BOOT APP) -> /patients ->Patients Array
+        ## (JWTValidation)GatewayFilterFactory helps intercept tokens for all requests to patient service
+        - id : patient-service-route
+          uri : http://host.docker.internal:4000
+          predicates :
+            - Path=/api/patients/**
+          filters :
+            - StripPrefix=1
+            - JwtValidation
+
+        #REST CLIENT -> http://localhost:4004/api-docs/patients
+        #API GATEWAY -> http://patient-service:4000/v3/api-docs
+        - id : api-docs-patient-route
+          uri: http://host.docker.internal:4000
+          predicates:
+            - Path=/api-docs/patients
+          filters:
+            - RewritePath=/api-docs/patients,/v3/api-docs
+
+        - id : api-docs-auth-service
+          uri : http://host.docker.internal:4005
+          predicates:
+            - Path=/api-docs/auth
+          filters:
+            - RewritePath=/api-docs/auth,/v3/api-docs
