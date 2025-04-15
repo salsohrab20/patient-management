@@ -1,0 +1,13 @@
+### PUT request to update patient
+PUT http://localhost:4004/api/patients/update/123e4567-e89b-12d3-a456-426614174000
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "John Do Kafka Test",
+  "email": "kafka_test1@example.com",
+  "address": "123 main street22",
+  "dateOfBirth": "1995-09-09",
+  "registeredDate": "2024-11-28"
+}
+###
