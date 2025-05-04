@@ -2,6 +2,11 @@ server:
   port: 4004
 
 spring:
+  data:
+    redis:
+      # take REDIS_HOST as precedence from env variable or take redis as fallback
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
   cloud:
     gateway:
       routes:
@@ -41,3 +46,9 @@ spring:
             - Path=/api-docs/auth
           filters:
             - RewritePath=/api-docs/auth,/v3/api-docs
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.burstCapacity: 5  # user can make 5 request
+            redis-rate-limiter.replenishRate: 5  # one new request will replenish every 200 millisecs or after one sec 5 request are available again
+            key-resolver: "#{@ipKeyResolver}"

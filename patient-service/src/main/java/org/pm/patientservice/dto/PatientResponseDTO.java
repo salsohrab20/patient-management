@@ -43,7 +43,6 @@ public class PatientResponseDTO {
     }
 
 
-
     public String getDateOfBirth() {
         return dateOfBirth;
     }

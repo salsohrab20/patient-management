@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
+import org.pm.patientservice.dto.PagedPatientResponseDTO;
 import org.pm.patientservice.dto.PatientRequestDTO;
 import org.pm.patientservice.dto.PatientResponseDTO;
 import org.pm.patientservice.dto.validators.CreatePatientValidationGroup;
@@ -14,14 +15,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.List;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
 
 @RestController
 @RequestMapping("/patients")
-@Tag(name= "Patient" , description = "API for managing patients")
+@Tag(name = "Patient", description = "API for managing patients")
 @OpenAPIDefinition
 public class PatientController {
 
@@ -31,28 +31,35 @@ public class PatientController {
         this.patientService = patientService;
     }
 
+    //http://localhost:4004/api/patients?page=1&size=10
     @GetMapping
     @Operation(summary = "Get Patients")
-    public ResponseEntity<List<PatientResponseDTO>> getAllPatients() {
-        List<PatientResponseDTO> allPatients = patientService.getAllPatients();
-        if(allPatients.isEmpty()) {
+    public ResponseEntity<PagedPatientResponseDTO> getAllPatients(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "asc") String sort,
+            @RequestParam(defaultValue = "name") String sortField,
+            @RequestParam(defaultValue = "") String searchValue
+    ) {
+        PagedPatientResponseDTO patients = patientService.getAllPatients(page, size,sort,sortField,searchValue);
+        if (isNull(patients) || patients.getTotalElements() == 0) {
             return ResponseEntity.noContent().build();
         }
 
-        return ResponseEntity.ok().body(allPatients);
+        return ResponseEntity.ok().body(patients);
     }
 
 
     @PostMapping("/create")
     @Operation(summary = "Create Patient")
     public ResponseEntity<PatientResponseDTO> createPatient(@Validated({Default.class, CreatePatientValidationGroup.class}) @RequestBody PatientRequestDTO patientRequestDTO) throws ParseException {
-        if(isNull(patientRequestDTO)){
+        if (isNull(patientRequestDTO)) {
             return ResponseEntity.badRequest().build();
         }
 
         PatientResponseDTO createdPatient = patientService.createPatient(patientRequestDTO);
 
-        return new ResponseEntity<>(createdPatient,HttpStatus.CREATED);
+        return new ResponseEntity<>(createdPatient, HttpStatus.CREATED);
 
     }
 
@@ -60,11 +67,11 @@ public class PatientController {
     @Operation(summary = "Update Patient")
     public ResponseEntity<PatientResponseDTO> updatePatient(@PathVariable UUID id,
                                                             @Validated(Default.class) @RequestBody PatientRequestDTO patientRequestDTO) throws ParseException {
-        if(isNull(patientRequestDTO)){
+        if (isNull(patientRequestDTO)) {
             return ResponseEntity.badRequest().build();
         }
 
-        PatientResponseDTO createdPatient = patientService.updatePatient(id,patientRequestDTO);
+        PatientResponseDTO createdPatient = patientService.updatePatient(id, patientRequestDTO);
 
         return ResponseEntity.ok().body(createdPatient);
 
