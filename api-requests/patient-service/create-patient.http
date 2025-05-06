@@ -5,7 +5,7 @@ Content-Type: application/json
 
 {
   "name": "John Doe Kafka Test",
-  "email": "kafk5sa_tses95aW1@example.com",
+  "email": "sJohnW1@example.com",
   "address": "123 main street22",
   "dateOfBirth": "1995-09-09",
   "registeredDate": "2024-11-28"
