@@ -143,6 +143,18 @@
             <artifactId>resilience4j-spring-boot3</artifactId>
             <version>2.3.0</version>
         </dependency>
+
+        <!-- Actuators -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Adds custom metrics to actuator endpoints-->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
     </dependencies>
 
 
