@@ -12,6 +12,7 @@ import software.amazon.awscdk.services.logs.RetentionDays;
 import software.amazon.awscdk.services.msk.CfnCluster;
 import software.amazon.awscdk.services.rds.*;
 import software.amazon.awscdk.services.route53.CfnHealthCheck;
+import software.amazon.awscdk.services.servicediscovery.DnsRecordType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +67,7 @@ public class LocalStack extends Stack {
                 "patient-service",
                 List.of(4000),
                 patientServiceDb,
-                Map.of("BILLING_SERVICE_ADDRESS", " host.docker.internal",
+                Map.of("BILLING_SERVICE_ADDRESS", "billing-service.patient-management.local",
                         "BILLING_SERVICE_GRPC_PORT","9001"));
 
         patientService.getNode().addDependency(patientServiceDb);
@@ -206,6 +207,10 @@ public class LocalStack extends Stack {
                 .cluster(ecsCluster)
                 .taskDefinition(taskDefinition)
                 .assignPublicIp(false)
+                .cloudMapOptions(CloudMapOptions.builder()
+                        .name(imageName)
+                        .dnsRecordType(DnsRecordType.A)
+                        .build())
                 .serviceName(imageName)
                 .build();
     }
@@ -224,7 +229,7 @@ public class LocalStack extends Stack {
                 .environment(
                         Map.of(
                                 "SPRING_PROFILE_ACTIVE","prod",
-                              "AUTH_SERVICE_URL", "http://host.docker.internal:4005"))
+                              "AUTH_SERVICE_URL", "http://auth-service.patient-management.local:4005"))
                 .portMappings(List.of(4004).stream()
                         .map(port -> PortMapping.builder()
                                 .containerPort(port)
@@ -255,6 +260,11 @@ public class LocalStack extends Stack {
                 .taskDefinition(taskDefinition)
                 .desiredCount(1)
                 .healthCheckGracePeriod(Duration.seconds(60))
+                .publicLoadBalancer(true)
+                .cloudMapOptions(CloudMapOptions.builder()
+                        .name("api-gateway")
+                        .dnsRecordType(DnsRecordType.A)
+                        .build())
                 .build();
     }
 
