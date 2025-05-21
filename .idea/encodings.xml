@@ -9,6 +9,7 @@
     <file url="file://$PROJECT_DIR$/billing-service/target/generated-sources/protobuf/grpc-java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/billing-service/target/generated-sources/protobuf/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/cucumber-api-testing/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cucumber-api-testing/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/cucumber-api-testing/src/test/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/infrastructure/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/infrastructure/src/main/resources" charset="UTF-8" />
