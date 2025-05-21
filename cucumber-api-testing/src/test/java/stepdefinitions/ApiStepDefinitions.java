@@ -4,7 +4,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.response.Response;
+import org.json.JSONObject;
 
+import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 
@@ -15,16 +17,26 @@ public class ApiStepDefinitions {
 
     @Given("the API is up and running")
     public void the_api_is_up_and_running() {
-        // Optional: Can include a health check here
+        baseURI = "http://localhost:4004";
     }
 
-    @When("I send a POST request to {string} with body:")
-    public void i_send_a_get_request_to(String url, String body) {
-        response = given()
-                .header("Content-Type", "application/json")
-                .body(body)
-                .when()
-                .post(url);
+
+    @When("I send a POST request to {string} with email {string} and password {string}")
+    public void i_send_a_post_request_to_with_email_and_password(String url, String email, String password)  {
+
+       try {
+           JSONObject body = new JSONObject();
+           body.put("email", email);
+           body.put("password", password);
+
+           response = given()
+                   .header("Content-Type", "application/json")
+                   .body(body.toString())
+                   .post(url);
+       }
+       catch (Exception e) {
+
+       }
     }
 
     @Then("the response status code should be {int}")
